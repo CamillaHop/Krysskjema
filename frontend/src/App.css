@@ -1,0 +1,255 @@
+/* ── App layout ── */
+
+.app {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem var(--spacing-page) 3rem;
+  font-family: var(--font-family);
+  color: var(--color-text);
+}
+
+/* ── Header ── */
+
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: var(--font-size-h1);
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+/* ── Global error ── */
+
+.global-error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-btn);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* ── Main grid ── */
+
+.app-main {
+  display: grid;
+  gap: 2rem;
+}
+
+/* ── Form ── */
+
+.kryss-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.kryss-form h2 {
+  margin: 0 0 1rem;
+  font-size: var(--font-size-h2);
+}
+
+.form-error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  font-size: var(--font-size-sm);
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-row label {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 160px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-label);
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  margin-top: 0.3rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  background: var(--color-input-bg);
+}
+
+.form-row textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.form-row input.readonly {
+  background: var(--color-readonly-bg);
+  cursor: not-allowed;
+}
+
+/* Date input – ensure clickable calendar icon is always visible */
+.form-row input[type="date"] {
+  cursor: pointer;
+  position: relative;
+}
+
+.form-row input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.form-row input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.kryss-form button[type="submit"] {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.8rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.kryss-form button[type="submit"]:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.kryss-form button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Table ── */
+
+.kryss-table-wrapper {
+  overflow-x: auto;
+}
+
+.kryss-table-wrapper h2,
+.summary-panel h2 {
+  font-size: var(--font-size-h2);
+  margin: 0 0 0.75rem;
+}
+
+.kryss-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.kryss-table th,
+.kryss-table td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.kryss-table th {
+  background: var(--color-th-bg);
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-label);
+}
+
+.kryss-table tr:hover {
+  background: var(--color-surface);
+}
+
+.comment-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kryss-count {
+  font-weight: 700;
+  text-align: center !important;
+}
+
+.btn-delete {
+  background: none;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+/* ── Summary ── */
+
+.summary-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.summary-table th,
+.summary-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.summary-table th {
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-label);
+}
+
+/* ── Loading / Empty ── */
+
+.loading,
+.empty {
+  text-align: center;
+  color: #888;
+  padding: 2rem 0;
+  font-style: italic;
+}
+

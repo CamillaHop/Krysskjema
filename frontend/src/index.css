@@ -1,0 +1,74 @@
+/* ══════════════════════════════════════════════════════════════
+   🎨  THEME — edit the variables below to customise colours,
+       fonts, spacing, and border-radius across the whole app.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Colour palette ───────────────────────────────────────── */
+  --color-primary:       #4361ee;   /* buttons, links, accents        */
+  --color-primary-hover: #3a56d4;   /* button hover state             */
+  --color-danger:        #e74c3c;   /* delete button, error accents   */
+  --color-danger-hover:  #c0392b;   /* delete hover                   */
+
+  --color-text:          #1a1a2e;   /* main body text                 */
+  --color-text-muted:    #666666;   /* subtitles, secondary text      */
+  --color-label:         #495057;   /* form labels, table headers     */
+
+  --color-bg:            #ffffff;   /* page background                */
+  --color-surface:       #f8f9fa;   /* cards, form bg, hover rows     */
+  --color-border:        #dee2e6;   /* panel & table borders          */
+  --color-input-border:  #ced4da;   /* input borders                  */
+  --color-input-bg:      #ffffff;   /* input background               */
+  --color-readonly-bg:   #e9ecef;   /* disabled / readonly fields     */
+  --color-th-bg:         #f1f3f5;   /* table header background        */
+
+  --color-error-bg:      #fdecea;   /* error banner background        */
+  --color-error-text:    #b71c1c;   /* error banner text              */
+
+  /* ── Typography ───────────────────────────────────────────── */
+  --font-family:         "Inter", system-ui, -apple-system, sans-serif;
+  --font-size-base:      0.95rem;
+  --font-size-sm:        0.85rem;
+  --font-size-xs:        0.8rem;
+  --font-size-h1:        2rem;
+  --font-size-h2:        1.25rem;
+  --line-height:         1.5;
+
+  /* ── Spacing & Radius ─────────────────────────────────────── */
+  --radius:              8px;       /* cards & panels                 */
+  --radius-sm:           4px;       /* inputs & small buttons         */
+  --radius-btn:          6px;       /* action buttons                 */
+  --spacing-page:        1.5rem;    /* horizontal page padding        */
+  --max-width:           960px;     /* app max width                  */
+}
+
+/* ── Global reset / base ── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-family);
+  line-height: var(--line-height);
+  font-weight: 400;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  margin-top: 0;
+}
+

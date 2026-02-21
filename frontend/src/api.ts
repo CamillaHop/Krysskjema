@@ -1,0 +1,63 @@
+/* ── API client — all backend communication goes through here ── */
+
+import type {
+  KryssCreatePayload,
+  KryssEntry,
+  KryssUpdatePayload,
+  Person,
+} from "./types";
+
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+
+async function request<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`API ${res.status}: ${body}`);
+  }
+
+  // 204 No Content (e.g. DELETE)
+  if (res.status === 204) return undefined as unknown as T;
+
+  return res.json() as Promise<T>;
+}
+
+/* ── People ── */
+
+export function fetchPeople(): Promise<Person[]> {
+  return request<Person[]>("/people");
+}
+
+/* ── Kryss CRUD ── */
+
+export function fetchKryss(limit = 100): Promise<KryssEntry[]> {
+  return request<KryssEntry[]>(`/kryss?limit=${limit}`);
+}
+
+export function createKryss(payload: KryssCreatePayload): Promise<KryssEntry> {
+  return request<KryssEntry>("/kryss", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateKryss(
+  id: string,
+  payload: KryssUpdatePayload
+): Promise<KryssEntry> {
+  return request<KryssEntry>(`/kryss/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteKryss(id: string): Promise<void> {
+  return request<void>(`/kryss/${id}`, { method: "DELETE" });
+}
