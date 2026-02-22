@@ -11,7 +11,7 @@ export interface KryssEntry {
   id: string;
   date: string;
   recipientPersonId: string;
-  givenByPersonId: string;
+  givenByPersonId?: string | null;
   category: Category;
   minutesLate: number | null;
   comment: string | null;
@@ -23,7 +23,7 @@ export interface KryssEntry {
 export interface KryssCreatePayload {
   date: string;
   recipientPersonId: string;
-  givenByPersonId: string;
+  givenByPersonId?: string | null;
   category: Category;
   minutesLate?: number | null;
   comment?: string | null;
@@ -56,5 +56,12 @@ export interface IceCreatePayload {
   date: string;
   iceePersonId: string;
   icerPersonId: string;
+  comment?: string | null;
+}
+
+export interface IceUpdatePayload {
+  date?: string;
+  iceePersonId?: string;
+  icerPersonId?: string;
   comment?: string | null;
 }

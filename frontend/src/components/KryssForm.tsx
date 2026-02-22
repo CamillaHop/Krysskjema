@@ -17,7 +17,6 @@ interface Props {
 export default function KryssForm({ people, onSubmit }: Props) {
   const [date, setDate] = useState(todayISO);
   const [recipientPersonId, setRecipientPersonId] = useState("");
-  const [givenByPersonId, setGivenByPersonId] = useState("");
   const [category, setCategory] = useState<Category>("Forsentkomming");
   const [minutesLate, setMinutesLate] = useState<string>("");
   const [comment, setComment] = useState("");
@@ -27,7 +26,6 @@ export default function KryssForm({ people, onSubmit }: Props) {
 
   const isDirty =
     recipientPersonId !== "" ||
-    givenByPersonId !== "" ||
     minutesLate !== "" ||
     comment !== "";
   useUnsavedGuard(isDirty);
@@ -48,7 +46,7 @@ export default function KryssForm({ people, onSubmit }: Props) {
   const isForsentkomming = category === "Forsentkomming";
 
   const isValid = useCallback((): boolean => {
-    if (!date || !recipientPersonId || !givenByPersonId) return false;
+    if (!date || !recipientPersonId) return false;
     if (isForsentkomming) {
       if (minutesLate === "" || Number(minutesLate) < 0) return false;
       if (!Number.isInteger(Number(minutesLate))) return false;
@@ -61,7 +59,6 @@ export default function KryssForm({ people, onSubmit }: Props) {
   }, [
     date,
     recipientPersonId,
-    givenByPersonId,
     isForsentkomming,
     minutesLate,
     comment,
@@ -78,7 +75,6 @@ export default function KryssForm({ people, onSubmit }: Props) {
     const payload: KryssCreatePayload = {
       date,
       recipientPersonId,
-      givenByPersonId,
       category,
       minutesLate: isForsentkomming ? Number(minutesLate) : null,
       comment: !isForsentkomming ? comment : comment || null,
@@ -90,7 +86,6 @@ export default function KryssForm({ people, onSubmit }: Props) {
       // Reset form
       setDate(todayISO());
       setRecipientPersonId("");
-      setGivenByPersonId("");
       setCategory("Forsentkomming");
       setMinutesLate("");
       setComment("");
@@ -137,21 +132,6 @@ export default function KryssForm({ people, onSubmit }: Props) {
           </select>
         </label>
 
-        <label>
-          Gitt av
-          <select
-            value={givenByPersonId}
-            onChange={(e) => setGivenByPersonId(e.target.value)}
-            required
-          >
-            <option value="">Velg person…</option>
-            {people.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </label>
       </div>
 
       <div className="form-row">

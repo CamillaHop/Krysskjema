@@ -1,12 +1,12 @@
 import { useState } from "react";
-import type { KryssEntry, KryssUpdatePayload, Person } from "../types";
-import EditKryssModal from "./EditKryssModal";
+import type { IceEntry, IceUpdatePayload, Person } from "../types";
+import EditIceModal from "./EditIceModal";
 
 interface Props {
-  entries: KryssEntry[];
+  entries: IceEntry[];
   people: Person[];
   onDelete: (id: string) => void;
-  onEdit: (id: string, payload: KryssUpdatePayload) => Promise<void>;
+  onEdit: (id: string, payload: IceUpdatePayload) => Promise<void>;
   loading: boolean;
 }
 
@@ -18,12 +18,11 @@ function personName(people: Person[], id: string): string {
 }
 
 function formatDate(iso: string): string {
-  // "2026-02-22" → "22/02/2026"
   const [y, m, d] = iso.split("-");
   return `${d}/${m}/${y}`;
 }
 
-export default function KryssTable({
+export default function IceTable({
   entries,
   people,
   onDelete,
@@ -31,35 +30,32 @@ export default function KryssTable({
   loading,
 }: Props) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [editing, setEditing] = useState<KryssEntry | null>(null);
+  const [editing, setEditing] = useState<IceEntry | null>(null);
 
   if (loading) return <p className="loading">Laster…</p>;
-  if (entries.length === 0) return <p className="empty">Flink gjeng som ikke har fått noen kryss ennå!</p>;
+  if (entries.length === 0) return <p className="empty">Urutta gjeng som ikke har Icet noen ennå...</p>;
 
-  // Sort by date descending
   const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
   const visible = sorted.slice(0, visibleCount);
   const hasMore = visibleCount < sorted.length;
   const isExpanded = visibleCount > PAGE_SIZE;
 
   function handleDelete(id: string) {
-    if (window.confirm("Er du sikker på at du vil slette dette krysset?")) {
+    if (window.confirm("Er du sikker på at du vil slette denne icen?")) {
       onDelete(id);
     }
   }
 
   return (
     <div className="kryss-table-wrapper">
-      <h2>Kryss</h2>
+      <h2>Ice</h2>
       <table className="kryss-table">
         <thead>
           <tr>
             <th>Dato</th>
-            <th>Mottaker</th>
-            <th>Kategori</th>
-            <th>Min. for sent</th>
+            <th>Icet</th>
+            <th>Icet av</th>
             <th>Kommentar</th>
-            <th>Kryss</th>
             <th className="actions-col"></th>
           </tr>
         </thead>
@@ -67,11 +63,9 @@ export default function KryssTable({
           {visible.map((e) => (
             <tr key={e.id}>
               <td>{formatDate(e.date)}</td>
-              <td>{personName(people, e.recipientPersonId)}</td>
-              <td>{e.category}</td>
-              <td>{e.minutesLate ?? "–"}</td>
+              <td>{personName(people, e.iceePersonId)}</td>
+              <td>{personName(people, e.icerPersonId)}</td>
               <td className="comment-cell">{e.comment ?? "–"}</td>
-              <td className="kryss-count">{e.kryssCount}</td>
               <td className="actions-col">
                 <button
                   className="btn-edit"
@@ -112,7 +106,7 @@ export default function KryssTable({
       </div>
 
       {editing && (
-        <EditKryssModal
+        <EditIceModal
           entry={editing}
           people={people}
           onSave={onEdit}

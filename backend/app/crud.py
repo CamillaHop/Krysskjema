@@ -9,7 +9,7 @@ from google.cloud.firestore_v1 import FieldFilter
 
 from app.firebase_client import get_firestore_client
 from app.kryss_calc import compute_kryss_for_minutes
-from app.models import Category, KryssCreate, KryssUpdate, IceCreate
+from app.models import Category, KryssCreate, KryssUpdate, IceCreate, IceUpdate
 from app.people import PEOPLE_BY_ID
 
 COLLECTION = "kryssEntries"
@@ -215,3 +215,32 @@ def delete_ice(doc_id: str) -> bool:
         return False
     doc_ref.delete()
     return True
+
+
+def update_ice(doc_id: str, data: IceUpdate) -> dict[str, Any] | None:
+    """Update an existing ice entry. Returns updated doc or None."""
+    db = get_firestore_client()
+    doc_ref = db.collection(ICE_COLLECTION).document(doc_id)
+    existing = doc_ref.get()
+    if not existing.exists:
+        return None
+
+    existing_data = existing.to_dict()
+    updates: dict[str, Any] = {}
+
+    if data.date is not None:
+        updates["date"] = data.date.isoformat()
+    if data.iceePersonId is not None:
+        _validate_person(data.iceePersonId, "iceePersonId")
+        updates["iceePersonId"] = data.iceePersonId
+    if data.icerPersonId is not None:
+        _validate_person(data.icerPersonId, "icerPersonId")
+        updates["icerPersonId"] = data.icerPersonId
+    if data.comment is not None:
+        updates["comment"] = data.comment
+
+    updates["updatedAt"] = _now_utc()
+    doc_ref.update(updates)
+
+    merged = {**existing_data, **updates, "id": doc_id}
+    return merged

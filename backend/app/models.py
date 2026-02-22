@@ -24,7 +24,7 @@ class KryssCreate(BaseModel):
 
     date: _dt.date = Field(default_factory=_dt.date.today, description="ISO date string")
     recipientPersonId: str = Field(..., description="Person receiving the kryss")
-    givenByPersonId: str = Field(..., description="Person who issued the kryss")
+    givenByPersonId: Optional[str] = Field(None, description="Person who issued the kryss")
     category: Category
     minutesLate: Optional[int] = Field(
         None, ge=0, description="Required for Forsentkomming"
@@ -87,7 +87,7 @@ class KryssResponse(BaseModel):
     id: str
     date: str
     recipientPersonId: str
-    givenByPersonId: str
+    givenByPersonId: Optional[str] = None
     category: str
     minutesLate: Optional[int] = None
     comment: Optional[str] = None
@@ -106,6 +106,15 @@ class IceCreate(BaseModel):
     iceePersonId: str = Field(..., description="Person receiving the ice")
     icerPersonId: str = Field(..., description="Person giving the ice")
     comment: Optional[str] = Field(None, description="Optional comment")
+
+
+class IceUpdate(BaseModel):
+    """Payload for updating an existing ice entry."""
+
+    date: Optional[_dt.date] = None
+    iceePersonId: Optional[str] = None
+    icerPersonId: Optional[str] = None
+    comment: Optional[str] = None
 
 
 class IceResponse(BaseModel):

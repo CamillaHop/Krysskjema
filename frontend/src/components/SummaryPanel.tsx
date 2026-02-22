@@ -1,24 +1,60 @@
-import type { KryssEntry, Person } from "../types";
+import type { KryssEntry, IceEntry, Person } from "../types";
 
 interface Props {
   entries: KryssEntry[];
+  iceEntries: IceEntry[];
   people: Person[];
 }
 
-export default function SummaryPanel({ entries, people }: Props) {
+/** Render grouped tally marks: groups of 2 */
+function TallyMarks({ count }: { count: number }) {
+  const fullGroups = Math.floor(count / 2);
+  const remainder = count % 2;
+
+  return (
+    <span className="tally-marks" aria-label={`${count} kryss`}>
+      {Array.from({ length: fullGroups }, (_, i) => (
+        <span key={`g${i}`} className="tally-group">
+          {"✕✕"}
+        </span>
+      ))}
+      {remainder > 0 && (
+        <span className="tally-group">
+          {"✕"}
+        </span>
+      )}
+      <span className="tally-total">({count})</span>
+    </span>
+  );
+}
+
+export default function SummaryPanel({ entries, iceEntries, people }: Props) {
   // Total kryss per recipient
-  const totals = new Map<string, number>();
+  const kryssTotals = new Map<string, number>();
   for (const e of entries) {
-    totals.set(
+    kryssTotals.set(
       e.recipientPersonId,
-      (totals.get(e.recipientPersonId) ?? 0) + e.kryssCount
+      (kryssTotals.get(e.recipientPersonId) ?? 0) + e.kryssCount
     );
   }
 
-  // Sort by total desc
+  // Ice received (icee) and given (icer) per person
+  const iceReceived = new Map<string, number>();
+  const iceGiven = new Map<string, number>();
+  for (const e of iceEntries) {
+    iceReceived.set(e.iceePersonId, (iceReceived.get(e.iceePersonId) ?? 0) + 1);
+    iceGiven.set(e.icerPersonId, (iceGiven.get(e.icerPersonId) ?? 0) + 1);
+  }
+
+  // Sort by total kryss desc
   const sorted = people
-    .map((p) => ({ person: p, total: totals.get(p.id) ?? 0 }))
-    .sort((a, b) => b.total - a.total);
+    .map((p) => ({
+      person: p,
+      kryss: kryssTotals.get(p.id) ?? 0,
+      iced: iceReceived.get(p.id) ?? 0,
+      icedOthers: iceGiven.get(p.id) ?? 0,
+    }))
+    .sort((a, b) => b.kryss - a.kryss);
 
   return (
     <div className="summary-panel">
@@ -27,14 +63,20 @@ export default function SummaryPanel({ entries, people }: Props) {
         <thead>
           <tr>
             <th>Person</th>
-            <th>Totalt kryss</th>
+            <th>Kryss</th>
+            <th>Blitt icet</th>
+            <th>Icet andre</th>
           </tr>
         </thead>
         <tbody>
-          {sorted.map(({ person, total }) => (
+          {sorted.map(({ person, kryss, iced, icedOthers }) => (
             <tr key={person.id}>
               <td>{person.name}</td>
-              <td className="kryss-count">{total}</td>
+              <td>
+                <TallyMarks count={kryss} />
+              </td>
+              <td className="ice-count">{iced}</td>
+              <td className="ice-count">{icedOthers}</td>
             </tr>
           ))}
         </tbody>

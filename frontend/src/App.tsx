@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
+import { Link, NavLink, Route, Routes } from "react-router-dom";
 import {
   createKryss,
   createIce,
   deleteKryss,
+  deleteIce,
+  updateKryss,
+  updateIce,
   fetchKryss,
+  fetchIce,
   fetchPeople,
 } from "./api";
-import type { KryssCreatePayload, IceCreatePayload, KryssEntry, Person } from "./types";
+import type { KryssCreatePayload, KryssUpdatePayload, IceCreatePayload, IceUpdatePayload, KryssEntry, IceEntry, Person } from "./types";
 import KryssFormPage from "./pages/FormPage";
 import IceFormPage from "./pages/IceFormPage";
 import AddChoicePage from "./pages/AddChoicePage";
+import LandingPage from "./pages/LandingPage";
 import LogPage from "./pages/LogPage";
 import StatsPage from "./pages/StatsPage";
 import "./App.css";
@@ -34,6 +39,7 @@ export default function App() {
   const [dark, toggleDark] = useDarkMode();
   const [people, setPeople] = useState<Person[]>([]);
   const [entries, setEntries] = useState<KryssEntry[]>([]);
+  const [iceEntries, setIceEntries] = useState<IceEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,9 +48,10 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const [ppl, kryss] = await Promise.all([fetchPeople(), fetchKryss()]);
+      const [ppl, kryss, ice] = await Promise.all([fetchPeople(), fetchKryss(), fetchIce()]);
       setPeople(ppl);
       setEntries(kryss);
+      setIceEntries(ice);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Kunne ikke laste data");
     } finally {
@@ -77,15 +84,34 @@ export default function App() {
     }
   }
 
+  async function handleDeleteIce(id: string) {
+    try {
+      await deleteIce(id);
+      setIceEntries((prev) => prev.filter((e) => e.id !== id));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Kunne ikke slette");
+    }
+  }
+
+  async function handleEditKryss(id: string, payload: KryssUpdatePayload) {
+    await updateKryss(id, payload);
+    await loadData();
+  }
+
+  async function handleEditIce(id: string, payload: IceUpdatePayload) {
+    await updateIce(id, payload);
+    await loadData();
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <div className="header-top">
           <div />
-          <div>
-            <h1>Team Rystad</h1>
+          <Link to="/" className="header-brand">
+            <h1>TEAM RYSTAD</h1>
             <p className="subtitle">Krysskjema og Ice</p>
-          </div>
+          </Link>
           <button
             className="theme-toggle"
             onClick={toggleDark}
@@ -99,12 +125,11 @@ export default function App() {
         <nav className="app-nav">
           <NavLink to="/logg">Oversikt</NavLink>
           <NavLink
-            to="/"
+            to="/legg-til"
             className={({ isActive }) => {
               const onAdd = window.location.pathname.startsWith("/legg-til");
               return isActive || onAdd ? "active" : "";
             }}
-            end
           >
             Legg til
           </NavLink>
@@ -116,7 +141,8 @@ export default function App() {
 
       <main className="app-main">
         <Routes>
-          <Route path="/" element={<AddChoicePage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/legg-til" element={<AddChoicePage />} />
           <Route
             path="/legg-til/kryss"
             element={
@@ -134,8 +160,12 @@ export default function App() {
             element={
               <LogPage
                 entries={entries}
+                iceEntries={iceEntries}
                 people={people}
                 onDelete={handleDelete}
+                onDeleteIce={handleDeleteIce}
+                onEditKryss={handleEditKryss}
+                onEditIce={handleEditIce}
                 loading={loading}
               />
             }

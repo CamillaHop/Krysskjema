@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function AddChoicePage() {
   return (
     <section className="choice-section">
-      <h2>Legg til</h2>
+      <h2>Hva ønsker du å legge til?</h2>
       <div className="choice-cards">
         <Link to="/legg-til/kryss" className="choice-card">
           <span className="choice-icon">✕</span>

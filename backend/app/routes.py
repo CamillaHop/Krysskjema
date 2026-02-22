@@ -6,8 +6,8 @@ import logging
 
 from fastapi import APIRouter, HTTPException, Query
 
-from app.crud import create_kryss, delete_kryss, get_kryss, list_kryss, update_kryss, create_ice, list_ice, delete_ice
-from app.models import KryssCreate, KryssResponse, KryssUpdate, PersonResponse, IceCreate, IceResponse
+from app.crud import create_kryss, delete_kryss, get_kryss, list_kryss, update_kryss, create_ice, list_ice, delete_ice, update_ice
+from app.models import KryssCreate, KryssResponse, KryssUpdate, PersonResponse, IceCreate, IceResponse, IceUpdate
 from app.people import PEOPLE
 
 logger = logging.getLogger(__name__)
@@ -122,3 +122,19 @@ def remove_ice(ice_id: str):
     except Exception as exc:
         logger.exception("Failed to delete ice")
         raise HTTPException(status_code=500, detail=f"Firestore error: {exc}")
+
+
+@router.put("/ice/{ice_id}", response_model=IceResponse)
+def put_ice(ice_id: str, payload: IceUpdate):
+    try:
+        result = update_ice(ice_id, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        logger.exception("Failed to update ice")
+        raise HTTPException(status_code=500, detail=f"Firestore error: {exc}")
+    if result is None:
+        raise HTTPException(status_code=404, detail="Ice entry not found")
+    return result

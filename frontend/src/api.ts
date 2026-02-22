@@ -7,6 +7,7 @@ import type {
   Person,
   IceCreatePayload,
   IceEntry,
+  IceUpdatePayload,
 } from "./types";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
@@ -79,4 +80,14 @@ export function createIce(payload: IceCreatePayload): Promise<IceEntry> {
 
 export function deleteIce(id: string): Promise<void> {
   return request<void>(`/ice/${id}`, { method: "DELETE" });
+}
+
+export function updateIce(
+  id: string,
+  payload: IceUpdatePayload
+): Promise<IceEntry> {
+  return request<IceEntry>(`/ice/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
 }
