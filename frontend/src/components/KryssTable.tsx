@@ -28,7 +28,7 @@ export default function KryssTable({
 
   return (
     <div className="kryss-table-wrapper">
-      <h2>Kryss-logg</h2>
+      <h2>Oversikt</h2>
       <table className="kryss-table">
         <thead>
           <tr>

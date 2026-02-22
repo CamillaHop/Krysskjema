@@ -29,6 +29,61 @@
   font-size: var(--font-size-base);
 }
 
+.header-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+}
+
+.header-top > div:last-of-type {
+  /* keep the center column for title */
+}
+
+.theme-toggle {
+  justify-self: end;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  padding: 0.35rem 0.55rem;
+  font-size: 1.15rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: border-color 0.2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-primary);
+}
+
+/* ── Navigation ── */
+
+.app-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 1rem;
+}
+
+.app-nav a {
+  padding: 0.45rem 1.2rem;
+  border-radius: var(--radius-btn);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  transition: background 0.2s, color 0.2s;
+}
+
+.app-nav a:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.app-nav a.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
 /* ── Global error ── */
 
 .global-error {
@@ -251,5 +306,53 @@
   color: #888;
   padding: 2rem 0;
   font-style: italic;
+}
+
+/* ── Choice cards (Legg til page) ── */
+
+.choice-section h2 {
+  text-align: center;
+  font-size: var(--font-size-h2);
+  margin-bottom: 1.5rem;
+}
+
+.choice-cards {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 160px;
+  height: 140px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+
+.choice-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 12px rgba(67, 97, 238, 0.15);
+  transform: translateY(-2px);
+}
+
+.choice-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.choice-label {
+  font-size: var(--font-size-base);
+  font-weight: 600;
 }
 

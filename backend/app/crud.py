@@ -9,10 +9,11 @@ from google.cloud.firestore_v1 import FieldFilter
 
 from app.firebase_client import get_firestore_client
 from app.kryss_calc import compute_kryss_for_minutes
-from app.models import Category, KryssCreate, KryssUpdate
+from app.models import Category, KryssCreate, KryssUpdate, IceCreate
 from app.people import PEOPLE_BY_ID
 
 COLLECTION = "kryssEntries"
+ICE_COLLECTION = "iceEntries"
 
 
 def _now_utc() -> str:
@@ -156,6 +157,59 @@ def delete_kryss(doc_id: str) -> bool:
     """Delete a kryss entry. Returns True if it existed."""
     db = get_firestore_client()
     doc_ref = db.collection(COLLECTION).document(doc_id)
+    doc = doc_ref.get()
+    if not doc.exists:
+        return False
+    doc_ref.delete()
+    return True
+
+
+# --------------------------------------------------------------------------- #
+#  ICE – CREATE / READ / DELETE
+# --------------------------------------------------------------------------- #
+
+
+def create_ice(data: IceCreate) -> dict[str, Any]:
+    """Create a new ice document and return it (with id)."""
+    _validate_person(data.iceePersonId, "iceePersonId")
+    _validate_person(data.icerPersonId, "icerPersonId")
+
+    now = _now_utc()
+    doc_data: dict[str, Any] = {
+        "date": data.date.isoformat(),
+        "iceePersonId": data.iceePersonId,
+        "icerPersonId": data.icerPersonId,
+        "comment": data.comment,
+        "createdAt": now,
+        "updatedAt": now,
+    }
+
+    db = get_firestore_client()
+    _, doc_ref = db.collection(ICE_COLLECTION).add(doc_data)
+    return {"id": doc_ref.id, **doc_data}
+
+
+def list_ice(limit: int = 100) -> list[dict[str, Any]]:
+    """Return ice entries sorted by date desc."""
+    db = get_firestore_client()
+    query = (
+        db.collection(ICE_COLLECTION)
+        .order_by("date", direction="DESCENDING")
+        .limit(limit)
+    )
+    docs = query.stream()
+    results: list[dict[str, Any]] = []
+    for doc in docs:
+        d = doc.to_dict()
+        d["id"] = doc.id
+        results.append(d)
+    return results
+
+
+def delete_ice(doc_id: str) -> bool:
+    """Delete an ice entry. Returns True if it existed."""
+    db = get_firestore_client()
+    doc_ref = db.collection(ICE_COLLECTION).document(doc_id)
     doc = doc_ref.get()
     if not doc.exists:
         return False

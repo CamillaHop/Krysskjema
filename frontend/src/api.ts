@@ -5,6 +5,8 @@ import type {
   KryssEntry,
   KryssUpdatePayload,
   Person,
+  IceCreatePayload,
+  IceEntry,
 } from "./types";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
@@ -60,4 +62,21 @@ export function updateKryss(
 
 export function deleteKryss(id: string): Promise<void> {
   return request<void>(`/kryss/${id}`, { method: "DELETE" });
+}
+
+/* ── Ice CRUD ── */
+
+export function fetchIce(limit = 100): Promise<IceEntry[]> {
+  return request<IceEntry[]>(`/ice?limit=${limit}`);
+}
+
+export function createIce(payload: IceCreatePayload): Promise<IceEntry> {
+  return request<IceEntry>("/ice", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteIce(id: string): Promise<void> {
+  return request<void>(`/ice/${id}`, { method: "DELETE" });
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Category, KryssCreatePayload, Person } from "../types";
 import { computeKryssForMinutes } from "../kryssCalc";
+import { useUnsavedGuard } from "../hooks/useUnsavedGuard";
 
 const CATEGORIES: Category[] = ["Forsentkomming", "Udugelighet", "Annet"];
 
@@ -23,6 +24,13 @@ export default function KryssForm({ people, onSubmit }: Props) {
   const [kryssCount, setKryssCount] = useState<string>("1");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isDirty =
+    recipientPersonId !== "" ||
+    givenByPersonId !== "" ||
+    minutesLate !== "" ||
+    comment !== "";
+  useUnsavedGuard(isDirty);
 
   // Auto‑calculate kryss for Forsentkomming
   const computedKryss =

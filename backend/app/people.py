@@ -15,11 +15,11 @@ class Person:
 
 
 PEOPLE: list[Person] = [
-    Person(id="p1", name="Henrik"),
-    Person(id="p2", name="Lars Ivar"),
-    Person(id="p3", name="Camilla H"),
-    Person(id="p4", name="Camilla W"),
-    Person(id="p5", name="Nicolai"),
+    Person(id="henrik-solheim", name="Henrik"),
+    Person(id="lars-ivar-skaarset", name="Lars Ivar"),
+    Person(id="camilla-hop", name="Camilla H"),
+    Person(id="camilla-wigstoel", name="Camilla W"),
+    Person(id="nicolai-baklund", name="Nicolai"),
 ]
 
 PEOPLE_BY_ID: dict[str, Person] = {p.id: p for p in PEOPLE}

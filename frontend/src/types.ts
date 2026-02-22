@@ -39,3 +39,22 @@ export interface KryssUpdatePayload {
   comment?: string | null;
   kryssCount?: number | null;
 }
+
+/* ── Ice ── */
+
+export interface IceEntry {
+  id: string;
+  date: string;
+  iceePersonId: string;
+  icerPersonId: string;
+  comment: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface IceCreatePayload {
+  date: string;
+  iceePersonId: string;
+  icerPersonId: string;
+  comment?: string | null;
+}

@@ -94,3 +94,25 @@ class KryssResponse(BaseModel):
     kryssCount: int
     createdAt: Optional[str] = None
     updatedAt: Optional[str] = None
+
+
+# ---------- Ice Models ---------- #
+
+
+class IceCreate(BaseModel):
+    """Payload for creating an ice entry."""
+
+    date: _dt.date = Field(default_factory=_dt.date.today, description="ISO date string")
+    iceePersonId: str = Field(..., description="Person receiving the ice")
+    icerPersonId: str = Field(..., description="Person giving the ice")
+    comment: Optional[str] = Field(None, description="Optional comment")
+
+
+class IceResponse(BaseModel):
+    id: str
+    date: str
+    iceePersonId: str
+    icerPersonId: str
+    comment: Optional[str] = None
+    createdAt: Optional[str] = None
+    updatedAt: Optional[str] = None
