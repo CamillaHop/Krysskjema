@@ -1,11 +1,13 @@
 import { useState, useMemo } from "react";
-import type { QuoteEntry, Person } from "../types";
+import type { QuoteEntry, QuoteUpdatePayload, Person } from "../types";
 import CustomSelect from "../components/CustomSelect";
+import EditQuoteModal from "../components/EditQuoteModal";
 
 interface Props {
   quotes: QuoteEntry[];
   people: Person[];
   onDelete: (id: string) => void;
+  onEdit: (id: string, payload: QuoteUpdatePayload) => Promise<void>;
   loading: boolean;
 }
 
@@ -23,8 +25,9 @@ function formatDateTime(iso: string | null): string {
   });
 }
 
-export default function QuotesPage({ quotes, people, onDelete, loading }: Props) {
+export default function QuotesPage({ quotes, people, onDelete, onEdit, loading }: Props) {
   const [filterPerson, setFilterPerson] = useState("");
+  const [editing, setEditing] = useState<QuoteEntry | null>(null);
 
   const peopleOptions = useMemo(
     () => [{ value: "", label: "Alle" }, ...people.map((p) => ({ value: p.id, label: p.name }))],
@@ -83,17 +86,35 @@ export default function QuotesPage({ quotes, people, onDelete, loading }: Props)
                 <span className="quote-date">
                   {formatDateTime(q.createdAt)}
                 </span>
-                <button
-                  className="btn-delete"
-                  onClick={() => handleDelete(q.id)}
-                  title="Slett"
-                >
-                  ✕
-                </button>
+                <div>
+                  <button
+                    className="btn-edit"
+                    onClick={() => setEditing(q)}
+                    title="Rediger"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="btn-delete"
+                    onClick={() => handleDelete(q.id)}
+                    title="Slett"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             </article>
           ))}
         </div>
+      )}
+
+      {editing && (
+        <EditQuoteModal
+          entry={editing}
+          people={people}
+          onSave={onEdit}
+          onClose={() => setEditing(null)}
+        />
       )}
     </section>
   );

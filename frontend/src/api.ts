@@ -10,6 +10,7 @@ import type {
   IceUpdatePayload,
   QuoteCreatePayload,
   QuoteEntry,
+  QuoteUpdatePayload,
 } from "./types";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
@@ -109,4 +110,14 @@ export function createQuote(payload: QuoteCreatePayload): Promise<QuoteEntry> {
 
 export function deleteQuote(id: string): Promise<void> {
   return request<void>(`/quotes/${id}`, { method: "DELETE" });
+}
+
+export function updateQuote(
+  id: string,
+  payload: QuoteUpdatePayload
+): Promise<QuoteEntry> {
+  return request<QuoteEntry>(`/quotes/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
 }

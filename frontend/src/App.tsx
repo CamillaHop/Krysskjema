@@ -7,6 +7,7 @@ import {
   deleteKryss,
   deleteIce,
   deleteQuote,
+  updateQuote,
   updateKryss,
   updateIce,
   fetchKryss,
@@ -14,7 +15,7 @@ import {
   fetchQuotes,
   fetchPeople,
 } from "./api";
-import type { KryssCreatePayload, KryssUpdatePayload, IceCreatePayload, IceUpdatePayload, QuoteCreatePayload, KryssEntry, IceEntry, QuoteEntry, Person } from "./types";
+import type { KryssCreatePayload, KryssUpdatePayload, IceCreatePayload, IceUpdatePayload, QuoteCreatePayload, QuoteUpdatePayload, KryssEntry, IceEntry, QuoteEntry, Person } from "./types";
 import KryssFormPage from "./pages/FormPage";
 import IceFormPage from "./pages/IceFormPage";
 import QuoteFormPage from "./pages/QuoteFormPage";
@@ -124,6 +125,11 @@ export default function App() {
     }
   }
 
+  async function handleEditQuote(id: string, payload: QuoteUpdatePayload) {
+    await updateQuote(id, payload);
+    await loadData();
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -189,6 +195,7 @@ export default function App() {
                 quotes={quotes}
                 people={people}
                 onDelete={handleDeleteQuote}
+                onEdit={handleEditQuote}
                 loading={loading}
               />
             }
@@ -208,7 +215,17 @@ export default function App() {
               />
             }
           />
-          <Route path="/statistikk" element={<StatsPage />} />
+          <Route
+            path="/statistikk"
+            element={
+              <StatsPage
+                entries={entries}
+                iceEntries={iceEntries}
+                people={people}
+                loading={loading}
+              />
+            }
+          />
         </Routes>
       </main>
     </div>
