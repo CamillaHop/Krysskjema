@@ -3,20 +3,25 @@ import { Link, NavLink, Route, Routes } from "react-router-dom";
 import {
   createKryss,
   createIce,
+  createQuote,
   deleteKryss,
   deleteIce,
+  deleteQuote,
   updateKryss,
   updateIce,
   fetchKryss,
   fetchIce,
+  fetchQuotes,
   fetchPeople,
 } from "./api";
-import type { KryssCreatePayload, KryssUpdatePayload, IceCreatePayload, IceUpdatePayload, KryssEntry, IceEntry, Person } from "./types";
+import type { KryssCreatePayload, KryssUpdatePayload, IceCreatePayload, IceUpdatePayload, QuoteCreatePayload, KryssEntry, IceEntry, QuoteEntry, Person } from "./types";
 import KryssFormPage from "./pages/FormPage";
 import IceFormPage from "./pages/IceFormPage";
+import QuoteFormPage from "./pages/QuoteFormPage";
 import AddChoicePage from "./pages/AddChoicePage";
 import LandingPage from "./pages/LandingPage";
 import LogPage from "./pages/LogPage";
+import QuotesPage from "./pages/QuotesPage";
 import StatsPage from "./pages/StatsPage";
 import "./App.css";
 
@@ -40,6 +45,7 @@ export default function App() {
   const [people, setPeople] = useState<Person[]>([]);
   const [entries, setEntries] = useState<KryssEntry[]>([]);
   const [iceEntries, setIceEntries] = useState<IceEntry[]>([]);
+  const [quotes, setQuotes] = useState<QuoteEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,10 +54,11 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const [ppl, kryss, ice] = await Promise.all([fetchPeople(), fetchKryss(), fetchIce()]);
+      const [ppl, kryss, ice, qts] = await Promise.all([fetchPeople(), fetchKryss(), fetchIce(), fetchQuotes()]);
       setPeople(ppl);
       setEntries(kryss);
       setIceEntries(ice);
+      setQuotes(qts);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Kunne ikke laste data");
     } finally {
@@ -103,6 +110,20 @@ export default function App() {
     await loadData();
   }
 
+  async function handleCreateQuote(payload: QuoteCreatePayload) {
+    await createQuote(payload);
+    await loadData();
+  }
+
+  async function handleDeleteQuote(id: string) {
+    try {
+      await deleteQuote(id);
+      setQuotes((prev) => prev.filter((q) => q.id !== id));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Kunne ikke slette");
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -110,7 +131,7 @@ export default function App() {
           <div />
           <Link to="/" className="header-brand">
             <h1>TEAM RYSTAD</h1>
-            <p className="subtitle">Krysskjema og Ice</p>
+            <p className="subtitle">Krysskjema, Ice og Sitater</p>
           </Link>
           <button
             className="theme-toggle"
@@ -124,8 +145,7 @@ export default function App() {
         </div>
         <nav className="app-nav">
           <NavLink to="/logg">Oversikt</NavLink>
-          <NavLink
-            to="/legg-til"
+          <NavLink to="/legg-til"
             className={({ isActive }) => {
               const onAdd = window.location.pathname.startsWith("/legg-til");
               return isActive || onAdd ? "active" : "";
@@ -133,6 +153,7 @@ export default function App() {
           >
             Legg til
           </NavLink>
+          <NavLink to="/sitater">Sitater</NavLink>
           <NavLink to="/statistikk">Statistikk</NavLink>
         </nav>
       </header>
@@ -153,6 +174,23 @@ export default function App() {
             path="/legg-til/ice"
             element={
               <IceFormPage people={people} onSubmit={handleCreateIce} />
+            }
+          />
+          <Route
+            path="/legg-til/sitat"
+            element={
+              <QuoteFormPage people={people} onSubmit={handleCreateQuote} />
+            }
+          />
+          <Route
+            path="/sitater"
+            element={
+              <QuotesPage
+                quotes={quotes}
+                people={people}
+                onDelete={handleDeleteQuote}
+                loading={loading}
+              />
             }
           />
           <Route

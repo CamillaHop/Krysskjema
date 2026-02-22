@@ -6,8 +6,8 @@ import logging
 
 from fastapi import APIRouter, HTTPException, Query
 
-from app.crud import create_kryss, delete_kryss, get_kryss, list_kryss, update_kryss, create_ice, list_ice, delete_ice, update_ice
-from app.models import KryssCreate, KryssResponse, KryssUpdate, PersonResponse, IceCreate, IceResponse, IceUpdate
+from app.crud import create_kryss, delete_kryss, get_kryss, list_kryss, update_kryss, create_ice, list_ice, delete_ice, update_ice, create_quote, list_quotes, delete_quote, update_quote
+from app.models import KryssCreate, KryssResponse, KryssUpdate, PersonResponse, IceCreate, IceResponse, IceUpdate, QuoteCreate, QuoteResponse, QuoteUpdate
 from app.people import PEOPLE
 
 logger = logging.getLogger(__name__)
@@ -137,4 +137,59 @@ def put_ice(ice_id: str, payload: IceUpdate):
         raise HTTPException(status_code=500, detail=f"Firestore error: {exc}")
     if result is None:
         raise HTTPException(status_code=404, detail="Ice entry not found")
+    return result
+
+
+# ---------- Quotes --------------------------------------------------------- #
+
+
+@router.get("/quotes", response_model=list[QuoteResponse])
+def get_quotes_list(limit: int = Query(200, ge=1, le=500)):
+    try:
+        return list_quotes(limit=limit)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        logger.exception("Failed to list quotes")
+        raise HTTPException(status_code=500, detail=f"Firestore error: {exc}")
+
+
+@router.post("/quotes", response_model=QuoteResponse, status_code=201)
+def post_quote(payload: QuoteCreate):
+    try:
+        return create_quote(payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        logger.exception("Failed to create quote")
+        raise HTTPException(status_code=500, detail=f"Firestore error: {exc}")
+
+
+@router.delete("/quotes/{quote_id}", status_code=204)
+def remove_quote(quote_id: str):
+    try:
+        if not delete_quote(quote_id):
+            raise HTTPException(status_code=404, detail="Quote not found")
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Failed to delete quote")
+        raise HTTPException(status_code=500, detail=f"Firestore error: {exc}")
+
+
+@router.put("/quotes/{quote_id}", response_model=QuoteResponse)
+def put_quote(quote_id: str, payload: QuoteUpdate):
+    try:
+        result = update_quote(quote_id, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        logger.exception("Failed to update quote")
+        raise HTTPException(status_code=500, detail=f"Firestore error: {exc}")
+    if result is None:
+        raise HTTPException(status_code=404, detail="Quote not found")
     return result

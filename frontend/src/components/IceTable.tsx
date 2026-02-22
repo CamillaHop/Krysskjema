@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { IceEntry, IceUpdatePayload, Person } from "../types";
 import EditIceModal from "./EditIceModal";
+import CustomSelect from "./CustomSelect";
 
 interface Props {
   entries: IceEntry[];
@@ -31,13 +32,22 @@ export default function IceTable({
 }: Props) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [editing, setEditing] = useState<IceEntry | null>(null);
+  const [filterPerson, setFilterPerson] = useState("");
+
+  const peopleOptions = useMemo(
+    () => [{ value: "", label: "Alle" }, ...people.map((p) => ({ value: p.id, label: p.name }))],
+    [people]
+  );
 
   if (loading) return <p className="loading">Laster…</p>;
   if (entries.length === 0) return <p className="empty">Urutta gjeng som ikke har Icet noen ennå...</p>;
 
   const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
-  const visible = sorted.slice(0, visibleCount);
-  const hasMore = visibleCount < sorted.length;
+  const filtered = filterPerson
+    ? sorted.filter((e) => e.iceePersonId === filterPerson || e.icerPersonId === filterPerson)
+    : sorted;
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
   const isExpanded = visibleCount > PAGE_SIZE;
 
   function handleDelete(id: string) {
@@ -48,7 +58,21 @@ export default function IceTable({
 
   return (
     <div className="kryss-table-wrapper">
-      <h2>Ice</h2>
+      <div className="table-header-row">
+        <h2>Ice</h2>
+        <div className="table-filter">
+          <label className="table-filter-label">Filtrer person</label>
+          <CustomSelect
+            options={peopleOptions}
+            value={filterPerson}
+            onChange={(v) => { setFilterPerson(v); setVisibleCount(PAGE_SIZE); }}
+            placeholder="Alle"
+          />
+        </div>
+      </div>
+      {filtered.length === 0 ? (
+        <p className="empty">Ingen ice funnet.</p>
+      ) : (
       <table className="kryss-table">
         <thead>
           <tr>
@@ -86,6 +110,7 @@ export default function IceTable({
           ))}
         </tbody>
       </table>
+      )}
       <div className="table-pagination">
         {hasMore && (
           <button

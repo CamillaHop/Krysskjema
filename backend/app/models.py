@@ -125,3 +125,31 @@ class IceResponse(BaseModel):
     comment: Optional[str] = None
     createdAt: Optional[str] = None
     updatedAt: Optional[str] = None
+
+
+# ---------- Quote Models ---------- #
+
+
+class QuoteCreate(BaseModel):
+    """Payload for creating a quote entry."""
+
+    personId: str = Field(..., description="Person who said the quote")
+    context: Optional[str] = Field(None, description="Free-text context, e.g. about/to whom")
+    text: str = Field(..., min_length=1, description="The quote text")
+
+
+class QuoteUpdate(BaseModel):
+    """Payload for updating an existing quote."""
+
+    personId: Optional[str] = None
+    context: Optional[str] = None
+    text: Optional[str] = None
+
+
+class QuoteResponse(BaseModel):
+    id: str
+    personId: str
+    context: Optional[str] = None
+    text: str
+    createdAt: Optional[str] = None
+    updatedAt: Optional[str] = None

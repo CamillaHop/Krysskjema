@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { KryssEntry, KryssUpdatePayload, Person } from "../types";
 import EditKryssModal from "./EditKryssModal";
+import CustomSelect from "./CustomSelect";
 
 interface Props {
   entries: KryssEntry[];
@@ -32,14 +33,23 @@ export default function KryssTable({
 }: Props) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [editing, setEditing] = useState<KryssEntry | null>(null);
+  const [filterPerson, setFilterPerson] = useState("");
+
+  const peopleOptions = useMemo(
+    () => [{ value: "", label: "Alle" }, ...people.map((p) => ({ value: p.id, label: p.name }))],
+    [people]
+  );
 
   if (loading) return <p className="loading">Laster…</p>;
   if (entries.length === 0) return <p className="empty">Flink gjeng som ikke har fått noen kryss ennå!</p>;
 
-  // Sort by date descending
+  // Sort by date descending, then filter
   const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
-  const visible = sorted.slice(0, visibleCount);
-  const hasMore = visibleCount < sorted.length;
+  const filtered = filterPerson
+    ? sorted.filter((e) => e.recipientPersonId === filterPerson)
+    : sorted;
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
   const isExpanded = visibleCount > PAGE_SIZE;
 
   function handleDelete(id: string) {
@@ -50,7 +60,21 @@ export default function KryssTable({
 
   return (
     <div className="kryss-table-wrapper">
-      <h2>Kryss</h2>
+      <div className="table-header-row">
+        <h2>Kryss</h2>
+        <div className="table-filter">
+          <label className="table-filter-label">Filtrer mottaker</label>
+          <CustomSelect
+            options={peopleOptions}
+            value={filterPerson}
+            onChange={(v) => { setFilterPerson(v); setVisibleCount(PAGE_SIZE); }}
+            placeholder="Alle"
+          />
+        </div>
+      </div>
+      {filtered.length === 0 ? (
+        <p className="empty">Ingen kryss funnet.</p>
+      ) : (
       <table className="kryss-table">
         <thead>
           <tr>
@@ -92,6 +116,7 @@ export default function KryssTable({
           ))}
         </tbody>
       </table>
+      )}
       <div className="table-pagination">
         {hasMore && (
           <button

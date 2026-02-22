@@ -9,11 +9,12 @@ from google.cloud.firestore_v1 import FieldFilter
 
 from app.firebase_client import get_firestore_client
 from app.kryss_calc import compute_kryss_for_minutes
-from app.models import Category, KryssCreate, KryssUpdate, IceCreate, IceUpdate
+from app.models import Category, KryssCreate, KryssUpdate, IceCreate, IceUpdate, QuoteCreate, QuoteUpdate
 from app.people import PEOPLE_BY_ID
 
 COLLECTION = "kryssEntries"
 ICE_COLLECTION = "iceEntries"
+QUOTE_COLLECTION = "quoteEntries"
 
 
 def _now_utc() -> str:
@@ -238,6 +239,83 @@ def update_ice(doc_id: str, data: IceUpdate) -> dict[str, Any] | None:
         updates["icerPersonId"] = data.icerPersonId
     if data.comment is not None:
         updates["comment"] = data.comment
+
+    updates["updatedAt"] = _now_utc()
+    doc_ref.update(updates)
+
+    merged = {**existing_data, **updates, "id": doc_id}
+    return merged
+
+
+# --------------------------------------------------------------------------- #
+#  QUOTE – CREATE / READ / UPDATE / DELETE
+# --------------------------------------------------------------------------- #
+
+
+def create_quote(data: QuoteCreate) -> dict[str, Any]:
+    """Create a new quote document and return it (with id)."""
+    _validate_person(data.personId, "personId")
+
+    now = _now_utc()
+    doc_data: dict[str, Any] = {
+        "personId": data.personId,
+        "context": data.context,
+        "text": data.text,
+        "createdAt": now,
+        "updatedAt": now,
+    }
+
+    db = get_firestore_client()
+    _, doc_ref = db.collection(QUOTE_COLLECTION).add(doc_data)
+    return {"id": doc_ref.id, **doc_data}
+
+
+def list_quotes(limit: int = 200) -> list[dict[str, Any]]:
+    """Return quote entries sorted by creation date desc."""
+    db = get_firestore_client()
+    query = (
+        db.collection(QUOTE_COLLECTION)
+        .order_by("createdAt", direction="DESCENDING")
+        .limit(limit)
+    )
+    docs = query.stream()
+    results: list[dict[str, Any]] = []
+    for doc in docs:
+        d = doc.to_dict()
+        d["id"] = doc.id
+        results.append(d)
+    return results
+
+
+def delete_quote(doc_id: str) -> bool:
+    """Delete a quote entry. Returns True if it existed."""
+    db = get_firestore_client()
+    doc_ref = db.collection(QUOTE_COLLECTION).document(doc_id)
+    doc = doc_ref.get()
+    if not doc.exists:
+        return False
+    doc_ref.delete()
+    return True
+
+
+def update_quote(doc_id: str, data: QuoteUpdate) -> dict[str, Any] | None:
+    """Update an existing quote entry. Returns updated doc or None."""
+    db = get_firestore_client()
+    doc_ref = db.collection(QUOTE_COLLECTION).document(doc_id)
+    existing = doc_ref.get()
+    if not existing.exists:
+        return None
+
+    existing_data = existing.to_dict()
+    updates: dict[str, Any] = {}
+
+    if data.personId is not None:
+        _validate_person(data.personId, "personId")
+        updates["personId"] = data.personId
+    if data.context is not None:
+        updates["context"] = data.context
+    if data.text is not None:
+        updates["text"] = data.text
 
     updates["updatedAt"] = _now_utc()
     doc_ref.update(updates)

@@ -2,6 +2,18 @@
 
 A full-stack web app for tracking **kryss** (crosses/demerits) assigned to team members for performance issues like late arrivals and other infractions.
 
+## How to Run
+``` bash
+cd backend
+source venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+```
+
+``` bash
+cd frontend
+npm run dev
+```
+
 ## Tech Stack
 
 | Layer     | Technology                        |

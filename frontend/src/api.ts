@@ -8,6 +8,8 @@ import type {
   IceCreatePayload,
   IceEntry,
   IceUpdatePayload,
+  QuoteCreatePayload,
+  QuoteEntry,
 } from "./types";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
@@ -90,4 +92,21 @@ export function updateIce(
     method: "PUT",
     body: JSON.stringify(payload),
   });
+}
+
+/* ── Quote CRUD ── */
+
+export function fetchQuotes(limit = 200): Promise<QuoteEntry[]> {
+  return request<QuoteEntry[]>(`/quotes?limit=${limit}`);
+}
+
+export function createQuote(payload: QuoteCreatePayload): Promise<QuoteEntry> {
+  return request<QuoteEntry>("/quotes", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteQuote(id: string): Promise<void> {
+  return request<void>(`/quotes/${id}`, { method: "DELETE" });
 }

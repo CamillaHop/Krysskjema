@@ -65,3 +65,26 @@ export interface IceUpdatePayload {
   icerPersonId?: string;
   comment?: string | null;
 }
+
+/* ── Quotes ── */
+
+export interface QuoteEntry {
+  id: string;
+  personId: string;
+  context?: string | null;
+  text: string;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface QuoteCreatePayload {
+  personId: string;
+  context?: string | null;
+  text: string;
+}
+
+export interface QuoteUpdatePayload {
+  personId?: string;
+  context?: string | null;
+  text?: string;
+}
