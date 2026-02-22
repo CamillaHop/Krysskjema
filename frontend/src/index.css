@@ -1,45 +1,50 @@
 /* ══════════════════════════════════════════════════════════════
-   🎨  THEME — edit the variables below to customise colours,
-       fonts, spacing, and border-radius across the whole app.
+   🎨  THEME
    ══════════════════════════════════════════════════════════════ */
 
 :root {
   /* ── Colour palette ───────────────────────────────────────── */
-  --color-primary:       #4361ee;   /* buttons, links, accents        */
-  --color-primary-hover: #3a56d4;   /* button hover state             */
-  --color-danger:        #e74c3c;   /* delete button, error accents   */
-  --color-danger-hover:  #c0392b;   /* delete hover                   */
+  --color-primary:       #B32519;
+  --color-primary-hover: #8f1e14;
+  --color-primary-subtle:#fdf2f1;
+  --color-danger:        #d32f2f;
+  --color-danger-hover:  #b71c1c;
 
-  --color-text:          #1a1a2e;   /* main body text                 */
-  --color-text-muted:    #666666;   /* subtitles, secondary text      */
-  --color-label:         #495057;   /* form labels, table headers     */
+  --color-text:          #1c1c1e;
+  --color-text-muted:    #6b6b6f;
+  --color-label:         #48484a;
 
-  --color-bg:            #ffffff;   /* page background                */
-  --color-surface:       #f8f9fa;   /* cards, form bg, hover rows     */
-  --color-border:        #dee2e6;   /* panel & table borders          */
-  --color-input-border:  #ced4da;   /* input borders                  */
-  --color-input-bg:      #ffffff;   /* input background               */
-  --color-readonly-bg:   #e9ecef;   /* disabled / readonly fields     */
-  --color-th-bg:         #f1f3f5;   /* table header background        */
+  --color-bg:            #fafafa;
+  --color-surface:       #ffffff;
+  --color-border:        #e0e0e0;
+  --color-input-border:  #c8c8cc;
+  --color-input-bg:      #ffffff;
+  --color-readonly-bg:   #f0f0f0;
+  --color-th-bg:         #f5f5f5;
 
-  --color-error-bg:      #fdecea;   /* error banner background        */
-  --color-error-text:    #b71c1c;   /* error banner text              */
+  --color-error-bg:      #fdecea;
+  --color-error-text:    #b71c1c;
 
   /* ── Typography ───────────────────────────────────────────── */
-  --font-family:         "Inter", system-ui, -apple-system, sans-serif;
-  --font-size-base:      0.95rem;
-  --font-size-sm:        0.85rem;
-  --font-size-xs:        0.8rem;
-  --font-size-h1:        2rem;
-  --font-size-h2:        1.25rem;
-  --line-height:         1.5;
+  --font-family:         "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-base:      0.875rem;
+  --font-size-sm:        0.8125rem;
+  --font-size-xs:        0.75rem;
+  --font-size-h1:        1.5rem;
+  --font-size-h2:        1.125rem;
+  --line-height:         1.55;
 
   /* ── Spacing & Radius ─────────────────────────────────────── */
-  --radius:              8px;       /* cards & panels                 */
-  --radius-sm:           4px;       /* inputs & small buttons         */
-  --radius-btn:          6px;       /* action buttons                 */
-  --spacing-page:        1.5rem;    /* horizontal page padding        */
-  --max-width:           960px;     /* app max width                  */
+  --radius:              6px;
+  --radius-sm:           4px;
+  --radius-btn:          4px;
+  --spacing-page:        2rem;
+  --max-width:           1040px;
+
+  /* ── Shadows ──────────────────────────────────────────────── */
+  --shadow-sm:           0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:           0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg:           0 4px 16px rgba(0,0,0,0.10);
 }
 
 /* ── Global reset / base ── */
@@ -70,6 +75,8 @@ body {
 
 h1, h2, h3 {
   margin-top: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -77,24 +84,29 @@ h1, h2, h3 {
    ══════════════════════════════════════════════════════════════ */
 
 html.dark {
-  --color-primary:       #5c7cfa;
-  --color-primary-hover: #748ffc;
-  --color-danger:        #ff6b6b;
-  --color-danger-hover:  #fa5252;
+  --color-primary:       #e04a3e;
+  --color-primary-hover: #c93a2f;
+  --color-primary-subtle:#2a1614;
+  --color-danger:        #ef5350;
+  --color-danger-hover:  #e53935;
 
-  --color-text:          #e1e1e6;
-  --color-text-muted:    #a0a0b0;
-  --color-label:         #b0b0c0;
+  --color-text:          #e4e4e7;
+  --color-text-muted:    #9c9ca6;
+  --color-label:         #b0b0ba;
 
-  --color-bg:            #16161a;
-  --color-surface:       #1e1e24;
-  --color-border:        #2e2e38;
-  --color-input-border:  #3a3a48;
-  --color-input-bg:      #22222a;
-  --color-readonly-bg:   #2a2a34;
-  --color-th-bg:         #1c1c24;
+  --color-bg:            #141416;
+  --color-surface:       #1c1c20;
+  --color-border:        #2c2c32;
+  --color-input-border:  #3a3a42;
+  --color-input-bg:      #1c1c20;
+  --color-readonly-bg:   #252528;
+  --color-th-bg:         #1a1a1e;
 
-  --color-error-bg:      #3b1a1a;
+  --color-error-bg:      #321414;
   --color-error-text:    #ff8a8a;
+
+  --shadow-sm:           0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md:           0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg:           0 4px 16px rgba(0,0,0,0.35);
 }
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
+import { NavLink, Route, Routes } from "react-router-dom";
 import {
   createKryss,
   createIce,
@@ -57,18 +57,15 @@ export default function App() {
   }, [loadData]);
 
   /* ── Handlers ── */
-  const navigate = useNavigate();
 
   async function handleCreateKryss(payload: KryssCreatePayload) {
     await createKryss(payload);
     await loadData();
-    navigate("/logg");
   }
 
   async function handleCreateIce(payload: IceCreatePayload) {
     await createIce(payload);
     await loadData();
-    navigate("/logg");
   }
 
   async function handleDelete(id: string) {
