@@ -18,7 +18,7 @@ export default function KryssTable({
   loading,
 }: Props) {
   if (loading) return <p className="loading">Laster…</p>;
-  if (entries.length === 0) return <p className="empty">Ingen kryss ennå.</p>;
+  if (entries.length === 0) return <p className="empty">Flink gjeng som ikke har fått noen kryss enda!.</p>;
 
   function handleDelete(id: string) {
     if (window.confirm("Er du sikker på at du vil slette dette krysset?")) {
