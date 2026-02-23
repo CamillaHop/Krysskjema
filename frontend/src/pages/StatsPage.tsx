@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   PieChart,
@@ -104,11 +104,49 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
 
   const totalIce = iceEntries.length;
 
+  const totalEnheter = useMemo(
+    () => entries.reduce((s, e) => s + Math.ceil((e.kryssCount ?? 1) / 2) * 3, 0),
+    [entries],
+  );
+
+  const avgKryssPerPerson = useMemo(() => {
+    if (kryssData.length === 0) return "–";
+    return (totalKryss / kryssData.length).toFixed(1);
+  }, [totalKryss, kryssData]);
+
+  const topCategory = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const e of entries) {
+      map[e.category] = (map[e.category] ?? 0) + 1;
+    }
+    const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
+    return sorted[0]?.[0] ?? "–";
+  }, [entries]);
+
   const topKryssReceiver = kryssData[0]?.name ?? "–";
   const topIceReceiver = iceReceivedData[0]?.name ?? "–";
   const topIceGiver = iceGivenData[0]?.name ?? "–";
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollCarousel = useCallback((direction: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = 210;
+    if (direction === "right") {
+      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 4) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: cardWidth, behavior: "smooth" });
+      }
+    } else {
+      if (el.scrollLeft <= 4) {
+        el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: -cardWidth, behavior: "smooth" });
+      }
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -136,9 +174,7 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
       <div className="stats-cards-wrapper">
         <button
           className="carousel-arrow carousel-arrow-left"
-          onClick={() => {
-            scrollRef.current?.scrollBy({ left: -200, behavior: "smooth" });
-          }}
+          onClick={() => scrollCarousel("left")}
           aria-label="Scroll left"
         >
           <ChevronLeft size={20} />
@@ -146,22 +182,42 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
 
         <div className="stats-cards" ref={scrollRef}>
           <div className="stat-card">
+            <span className="stat-card-icon">✕</span>
             <span className="stat-card-value">{totalKryss}</span>
-            <span className="stat-card-label">Totalt antall kryss</span>
+            <span className="stat-card-label">Totalt kryss</span>
           </div>
           <div className="stat-card">
+            <span className="stat-card-icon">🏆</span>
             <span className="stat-card-value highlight">{topKryssReceiver}</span>
             <span className="stat-card-label">Flest kryss mottatt</span>
           </div>
           <div className="stat-card">
-            <span className="stat-card-value">{totalIce}</span>
-            <span className="stat-card-label">Totalt antall ice</span>
+            <span className="stat-card-icon">🍺</span>
+            <span className="stat-card-value">{totalEnheter}</span>
+            <span className="stat-card-label">Totalt enheter</span>
           </div>
           <div className="stat-card">
+            <span className="stat-card-icon">📊</span>
+            <span className="stat-card-value">{avgKryssPerPerson}</span>
+            <span className="stat-card-label">Snitt kryss per person</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-card-icon">📂</span>
+            <span className="stat-card-value highlight">{topCategory}</span>
+            <span className="stat-card-label">Vanligste kategori</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-card-icon">❄️</span>
+            <span className="stat-card-value">{totalIce}</span>
+            <span className="stat-card-label">Totalt ice</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-card-icon">🥶</span>
             <span className="stat-card-value highlight">{topIceReceiver}</span>
             <span className="stat-card-label">Mest icet (mottatt)</span>
           </div>
           <div className="stat-card">
+            <span className="stat-card-icon">🧊</span>
             <span className="stat-card-value highlight">{topIceGiver}</span>
             <span className="stat-card-label">Flest ice gitt</span>
           </div>
@@ -169,9 +225,7 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
 
         <button
           className="carousel-arrow carousel-arrow-right"
-          onClick={() => {
-            scrollRef.current?.scrollBy({ left: 200, behavior: "smooth" });
-          }}
+          onClick={() => scrollCarousel("right")}
           aria-label="Scroll right"
         >
           <ChevronRight size={20} />
@@ -195,7 +249,7 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
                   outerRadius={100}
                   innerRadius={40}
                   paddingAngle={2}
-                  label={({ name, percent }) =>
+                  label={({ name, percent = 0 }) =>
                     `${name} (${(percent * 100).toFixed(0)}%)`
                   }
                   labelLine={true}
@@ -226,7 +280,7 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
                   outerRadius={100}
                   innerRadius={40}
                   paddingAngle={2}
-                  label={({ name, percent }) =>
+                  label={({ name, percent = 0 }) =>
                     `${name} (${(percent * 100).toFixed(0)}%)`
                   }
                   labelLine={true}
@@ -257,7 +311,7 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
                   outerRadius={100}
                   innerRadius={40}
                   paddingAngle={2}
-                  label={({ name, percent }) =>
+                  label={({ name, percent = 0 }) =>
                     `${name} (${(percent * 100).toFixed(0)}%)`
                   }
                   labelLine={true}

@@ -20,7 +20,7 @@ function personName(people: Person[], id: string): string {
 
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
+  return `${d}/${m}/${y.slice(2)}`;
 }
 
 export default function IceTable({
