@@ -105,8 +105,8 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
   const totalIce = iceEntries.length;
 
   const totalEnheter = useMemo(
-    () => entries.reduce((s, e) => s + Math.ceil((e.kryssCount ?? 1) / 2) * 3, 0),
-    [entries],
+    () => kryssData.reduce((s, p) => s + Math.ceil(p.value / 2) * 3, 0),
+    [kryssData],
   );
 
   const topKryssReceiver = kryssData[0]?.name ?? "–";

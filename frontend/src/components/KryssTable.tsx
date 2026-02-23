@@ -82,7 +82,6 @@ export default function KryssTable({
           <col style={{ width: "7%" }} />
           <col />
           <col style={{ width: "7%" }} />
-          <col style={{ width: "8%" }} />
           <col style={{ width: "7%" }} />
         </colgroup>
         <thead>
@@ -93,7 +92,6 @@ export default function KryssTable({
             <th># Min.</th>
             <th>Kommentar</th>
             <th>Kryss</th>
-            <th>Enheter</th>
             <th className="actions-col"></th>
           </tr>
         </thead>
@@ -106,7 +104,6 @@ export default function KryssTable({
               <td>{e.minutesLate ?? "–"}</td>
               <td className="comment-cell">{e.comment ?? "–"}</td>
               <td className="kryss-count">{e.kryssCount}</td>
-              <td className="kryss-count">{Math.ceil((e.kryssCount ?? 1) / 2) * 3}</td>
               <td className="actions-col">
                 <button
                   className="btn-edit"

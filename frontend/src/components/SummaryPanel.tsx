@@ -64,6 +64,7 @@ export default function SummaryPanel({ entries, iceEntries, people }: Props) {
           <tr>
             <th>Person</th>
             <th>Kryss</th>
+            <th>Enheter</th>
             <th>Blitt icet</th>
             <th>Icet andre</th>
           </tr>
@@ -75,6 +76,7 @@ export default function SummaryPanel({ entries, iceEntries, people }: Props) {
               <td>
                 <TallyMarks count={kryss} />
               </td>
+              <td className="enheter-count">{Math.ceil(kryss / 2) * 3}</td>
               <td className="ice-count">{iced}</td>
               <td className="ice-count">{icedOthers}</td>
             </tr>
