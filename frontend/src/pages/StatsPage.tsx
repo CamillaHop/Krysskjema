@@ -267,7 +267,7 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
         {/* Ice given */}
         {iceGivenData.length > 0 && (
           <div className="chart-card">
-            <h3>Antall ice gitt</h3>
+            <h3>Beste icer: antall ice gitt</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
@@ -298,7 +298,7 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
         {/* Ice received */}
         {iceReceivedData.length > 0 && (
           <div className="chart-card">
-            <h3>Antall ice mottatt</h3>
+            <h3>Største stakkar: antall ice motatt</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
