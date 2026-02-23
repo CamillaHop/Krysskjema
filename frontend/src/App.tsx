@@ -41,8 +41,26 @@ function useDarkMode() {
   return [dark, () => setDark((d) => !d)] as const;
 }
 
+type ColorTheme = "red" | "blue";
+
+function useColorTheme() {
+  const [color, setColor] = useState<ColorTheme>(() => {
+    return (localStorage.getItem("colorTheme") as ColorTheme) || "red";
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.remove("blue");
+    if (color === "blue") document.documentElement.classList.add("blue");
+    localStorage.setItem("colorTheme", color);
+  }, [color]);
+
+  const toggle = () => setColor((c) => (c === "red" ? "blue" : "red"));
+  return [color, toggle] as const;
+}
+
 export default function App() {
   const [dark, toggleDark] = useDarkMode();
+  const [colorTheme, toggleColor] = useColorTheme();
   const [people, setPeople] = useState<Person[]>([]);
   const [entries, setEntries] = useState<KryssEntry[]>([]);
   const [iceEntries, setIceEntries] = useState<IceEntry[]>([]);
@@ -139,15 +157,27 @@ export default function App() {
             <h1>TEAM RYSTAD</h1>
             <p className="subtitle">Krysskjema, Ice og Sitater</p>
           </Link>
-          <button
-            className="theme-toggle"
-            onClick={toggleDark}
-            aria-label="Toggle dark mode"
-            title={dark ? "Bytt til lyst tema" : "Bytt til mørkt tema"}
-          >
-            {dark ? "☀︎" : "⏾"}
-
-          </button>
+          <div className="header-toggles">
+            <button
+              className="color-toggle"
+              onClick={toggleColor}
+              aria-label="Bytt fargetema"
+              title={colorTheme === "red" ? "Bytt til blått tema" : "Bytt til rødt tema"}
+            >
+              <span
+                className="color-dot"
+                style={{ background: colorTheme === "red" ? "#589EF8" : "#B32519" }}
+              />
+            </button>
+            <button
+              className="theme-toggle"
+              onClick={toggleDark}
+              aria-label="Toggle dark mode"
+              title={dark ? "Bytt til lyst tema" : "Bytt til mørkt tema"}
+            >
+              {dark ? "☀︎" : "⏾"}
+            </button>
+          </div>
         </div>
         <nav className="app-nav">
           <NavLink to="/logg">Oversikt</NavLink>

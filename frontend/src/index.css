@@ -113,3 +113,29 @@ html.dark {
   color-scheme: dark;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   🔵  BLUE THEME — activated by adding class "blue" to <html>
+   ══════════════════════════════════════════════════════════════ */
+
+html.blue {
+  --color-primary:       #3d7ed6;
+  --color-primary-hover: #2e66b3;
+  --color-primary-subtle:#eef4fd;
+  --color-danger:        #d32f2f;
+  --color-danger-hover:  #b71c1c;
+
+  --color-error-bg:      #fdecea;
+  --color-error-text:    #b71c1c;
+}
+
+html.blue.dark {
+  --color-primary:       #589EF8;
+  --color-primary-hover: #4580d4;
+  --color-primary-subtle:#141e2e;
+  --color-danger:        #ef5350;
+  --color-danger-hover:  #e53935;
+
+  --color-error-bg:      #141428;
+  --color-error-text:    #8ab4ff;
+}
+

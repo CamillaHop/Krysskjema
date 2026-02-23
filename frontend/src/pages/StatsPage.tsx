@@ -11,10 +11,17 @@ import {
 import type { KryssEntry, IceEntry, Person } from "../types";
 
 /* ── Red-shade palette for chart slices ── */
-const COLORS = [
+const RED_COLORS = [
   "#B32519", "#d4382b", "#e04a3e", "#e8675d", "#f0857c",
   "#f4a29b", "#8f1e14", "#c93a2f", "#a13025", "#f7bfba",
   "#7a1a11", "#e95e52", "#d45046", "#b84a42", "#ff9e97",
+];
+
+/* ── Blue-shade palette for chart slices ── */
+const BLUE_COLORS = [
+  "#589EF8", "#3d7ed6", "#2e66b3", "#78b2fa", "#9ac5fc",
+  "#bcdbfe", "#1a4e8a", "#4580d4", "#2b5fa0", "#d4e6fe",
+  "#143d6e", "#6aa8f7", "#5090e0", "#3a72c0", "#a8cffb",
 ];
 
 interface Props {
@@ -60,6 +67,11 @@ function renderLegend(props: any) {
 }
 
 export default function StatsPage({ entries, iceEntries, people, loading }: Props) {
+  /* ── Pick chart palette based on active color theme ── */
+  const COLORS = document.documentElement.classList.contains("blue")
+    ? BLUE_COLORS
+    : RED_COLORS;
+
   /* ── Kryss distribution (total kryssCount per person) ── */
   const kryssData = useMemo(() => {
     const map: Record<string, number> = {};
