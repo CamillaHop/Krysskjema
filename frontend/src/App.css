@@ -1029,6 +1029,12 @@ html.dark .custom-select.open .custom-select-trigger {
   display: none;
 }
 
+.stats-cards-set {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
 .stat-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);

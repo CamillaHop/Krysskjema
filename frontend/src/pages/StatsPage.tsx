@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   PieChart,
@@ -109,43 +109,48 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
     [entries],
   );
 
-  const avgKryssPerPerson = useMemo(() => {
-    if (kryssData.length === 0) return "–";
-    return (totalKryss / kryssData.length).toFixed(1);
-  }, [totalKryss, kryssData]);
-
-  const topCategory = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const e of entries) {
-      map[e.category] = (map[e.category] ?? 0) + 1;
-    }
-    const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
-    return sorted[0]?.[0] ?? "–";
-  }, [entries]);
-
   const topKryssReceiver = kryssData[0]?.name ?? "–";
   const topIceReceiver = iceReceivedData[0]?.name ?? "–";
   const topIceGiver = iceGivenData[0]?.name ?? "–";
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  /* Centre on the middle (original) set so we can scroll both directions */
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const oneSetWidth = el.scrollWidth / 3;
+    el.scrollLeft = oneSetWidth;
+  }, []);
+
+  /* After any scroll finishes, silently reset to the middle copy if we drifted
+     into the first or last clone region — this makes it feel infinite. */
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    function onScrollEnd() {
+      const container = scrollRef.current;
+      if (!container) return;
+      const oneSet = container.scrollWidth / 3;
+      if (container.scrollLeft < oneSet * 0.25) {
+        container.style.scrollBehavior = "auto";
+        container.scrollLeft += oneSet;
+        container.style.scrollBehavior = "";
+      } else if (container.scrollLeft > oneSet * 1.75) {
+        container.style.scrollBehavior = "auto";
+        container.scrollLeft -= oneSet;
+        container.style.scrollBehavior = "";
+      }
+    }
+    el.addEventListener("scrollend", onScrollEnd);
+    return () => el.removeEventListener("scrollend", onScrollEnd);
+  }, []);
+
   const scrollCarousel = useCallback((direction: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
     const cardWidth = 210;
-    if (direction === "right") {
-      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 4) {
-        el.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        el.scrollBy({ left: cardWidth, behavior: "smooth" });
-      }
-    } else {
-      if (el.scrollLeft <= 4) {
-        el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
-      } else {
-        el.scrollBy({ left: -cardWidth, behavior: "smooth" });
-      }
-    }
+    el.scrollBy({ left: direction === "right" ? cardWidth : -cardWidth, behavior: "smooth" });
   }, []);
 
   if (loading) {
@@ -181,46 +186,40 @@ export default function StatsPage({ entries, iceEntries, people, loading }: Prop
         </button>
 
         <div className="stats-cards" ref={scrollRef}>
-          <div className="stat-card">
-            <span className="stat-card-icon">✕</span>
-            <span className="stat-card-value">{totalKryss}</span>
-            <span className="stat-card-label">Totalt kryss</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon">🏆</span>
-            <span className="stat-card-value highlight">{topKryssReceiver}</span>
-            <span className="stat-card-label">Flest kryss mottatt</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon">🍺</span>
-            <span className="stat-card-value">{totalEnheter}</span>
-            <span className="stat-card-label">Totalt enheter</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon">📊</span>
-            <span className="stat-card-value">{avgKryssPerPerson}</span>
-            <span className="stat-card-label">Snitt kryss per person</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon">📂</span>
-            <span className="stat-card-value highlight">{topCategory}</span>
-            <span className="stat-card-label">Vanligste kategori</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon">❄️</span>
-            <span className="stat-card-value">{totalIce}</span>
-            <span className="stat-card-label">Totalt ice</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon">🥶</span>
-            <span className="stat-card-value highlight">{topIceReceiver}</span>
-            <span className="stat-card-label">Mest icet (mottatt)</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card-icon">🧊</span>
-            <span className="stat-card-value highlight">{topIceGiver}</span>
-            <span className="stat-card-label">Flest ice gitt</span>
-          </div>
+          {[0, 1, 2].map((copy) => (
+            <div className="stats-cards-set" key={copy}>
+              <div className="stat-card">
+                <span className="stat-card-icon">✕</span>
+                <span className="stat-card-value">{totalKryss}</span>
+                <span className="stat-card-label">Totalt antall kryss</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-icon">🍺</span>
+                <span className="stat-card-value">{totalEnheter}</span>
+                <span className="stat-card-label">Totalt antall enheter</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-icon">🏆</span>
+                <span className="stat-card-value highlight">{topKryssReceiver}</span>
+                <span className="stat-card-label">Kryssgigant</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-icon">❄️</span>
+                <span className="stat-card-value">{totalIce}</span>
+                <span className="stat-card-label">Totalt antall ice</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-icon">🥶</span>
+                <span className="stat-card-value highlight">{topIceReceiver}</span>
+                <span className="stat-card-label">Største stakkar (oftest icet)</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-card-icon">🧊</span>
+                <span className="stat-card-value highlight">{topIceGiver}</span>
+                <span className="stat-card-label">Icer oftest</span>
+              </div>
+            </div>
+          ))}
         </div>
 
         <button
