@@ -12,6 +12,9 @@ backend/serviceAccountKey.json
 backend/*.json
 !backend/package.json
 
+# Extra data
+backend/app/people.py
+
 # Environment
 backend/.env
 frontend/.env
