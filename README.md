@@ -1,6 +1,6 @@
 # Krysskjema
 
-A full-stack web app for tracking **kryss** (crosses/demerits) assigned to team members for performance issues like late arrivals and other infractions.
+A full-stack web app for tracking **kryss** (crosses/demerits) assigned to team members for performance issues like late arrivals and other infractions. Also supports **icing** (ice challenges between members) and a shared **quote board**.
 
 ## How to Run
 ``` bash
@@ -30,7 +30,7 @@ Krysskjema/
 │   ├── app/
 │   │   ├── __init__.py
 │   │   ├── config.py          # env var loading
-│   │   ├── crud.py            # Firestore CRUD operations
+│   │   ├── crud.py            # Firestore CRUD (kryss, ice, quotes)
 │   │   ├── firebase_client.py # Firebase Admin SDK init
 │   │   ├── kryss_calc.py      # ln-based kryss computation
 │   │   ├── main.py            # FastAPI app entry point
@@ -39,14 +39,31 @@ Krysskjema/
 │   │   └── routes.py          # API route handlers
 │   ├── tests/
 │   │   └── test_kryss_calc.py
-│   ├── .env.example
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── CustomSelect.tsx
+│   │   │   ├── EditIceModal.tsx
+│   │   │   ├── EditKryssModal.tsx
+│   │   │   ├── EditQuoteModal.tsx
+│   │   │   ├── IceForm.tsx
+│   │   │   ├── IceTable.tsx
 │   │   │   ├── KryssForm.tsx
 │   │   │   ├── KryssTable.tsx
+│   │   │   ├── QuoteForm.tsx
 │   │   │   └── SummaryPanel.tsx
+│   │   ├── hooks/
+│   │   │   └── useUnsavedGuard.ts
+│   │   ├── pages/
+│   │   │   ├── AddChoicePage.tsx
+│   │   │   ├── FormPage.tsx
+│   │   │   ├── IceFormPage.tsx
+│   │   │   ├── LandingPage.tsx
+│   │   │   ├── LogPage.tsx
+│   │   │   ├── QuoteFormPage.tsx
+│   │   │   ├── QuotesPage.tsx
+│   │   │   └── StatsPage.tsx
 │   │   ├── api.ts
 │   │   ├── App.tsx
 │   │   ├── App.css
@@ -114,14 +131,22 @@ The API will be available at **http://localhost:8000**.
 
 ### API Endpoints
 
-| Method | Path             | Description                    |
-| ------ | ---------------- | ------------------------------ |
-| GET    | `/health`        | Health check                   |
-| GET    | `/people`        | List team members              |
-| GET    | `/kryss?limit=N` | List kryss entries (desc)     |
-| POST   | `/kryss`         | Create a kryss entry           |
-| PUT    | `/kryss/{id}`    | Update a kryss entry           |
-| DELETE | `/kryss/{id}`    | Delete a kryss entry           |
+| Method | Path              | Description                    |
+| ------ | ----------------- | ------------------------------ |
+| GET    | `/health`         | Health check                   |
+| GET    | `/people`         | List team members              |
+| GET    | `/kryss?limit=N`  | List kryss entries (desc)      |
+| POST   | `/kryss`          | Create a kryss entry           |
+| PUT    | `/kryss/{id}`     | Update a kryss entry           |
+| DELETE | `/kryss/{id}`     | Delete a kryss entry           |
+| GET    | `/ice?limit=N`    | List ice entries (desc)        |
+| POST   | `/ice`            | Create an ice entry            |
+| PUT    | `/ice/{id}`       | Update an ice entry            |
+| DELETE | `/ice/{id}`       | Delete an ice entry            |
+| GET    | `/quotes?limit=N` | List quotes (desc)             |
+| POST   | `/quotes`         | Create a quote                 |
+| PUT    | `/quotes/{id}`    | Update a quote                 |
+| DELETE | `/quotes/{id}`    | Delete a quote                 |
 
 ### Example Requests
 
@@ -237,4 +262,4 @@ Currently hardcoded as 5 placeholder members. To change, edit:
 
 - **Auth:** Not implemented. The code is structured to add authentication later (e.g., Firebase Auth).
 - **Firestore rules:** Running in **test mode** (open access). Secure before any production use.
-- **Editing entries:** The PUT endpoint is available. The frontend currently supports delete only — editing can be added as a future enhancement.
+- **Editing entries:** Full CRUD (create, read, update, delete) is supported for kryss, ice, and quotes in both the backend and frontend.
