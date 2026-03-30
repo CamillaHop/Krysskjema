@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
+
+from app.auth import require_auth
 
 from app.crud import create_kryss, delete_kryss, get_kryss, list_kryss, update_kryss, create_ice, list_ice, delete_ice, update_ice, create_quote, list_quotes, delete_quote, update_quote
 from app.models import KryssCreate, KryssResponse, KryssUpdate, PersonResponse, IceCreate, IceResponse, IceUpdate, QuoteCreate, QuoteResponse, QuoteUpdate
@@ -45,7 +47,7 @@ def get_kryss_list(limit: int = Query(100, ge=1, le=500)):
 
 
 @router.post("/kryss", response_model=KryssResponse, status_code=201)
-def post_kryss(payload: KryssCreate):
+def post_kryss(payload: KryssCreate, _user: dict = Depends(require_auth)):
     try:
         return create_kryss(payload)
     except ValueError as exc:
@@ -58,7 +60,7 @@ def post_kryss(payload: KryssCreate):
 
 
 @router.put("/kryss/{kryss_id}", response_model=KryssResponse)
-def put_kryss(kryss_id: str, payload: KryssUpdate):
+def put_kryss(kryss_id: str, payload: KryssUpdate, _user: dict = Depends(require_auth)):
     try:
         result = update_kryss(kryss_id, payload)
     except ValueError as exc:
@@ -74,7 +76,7 @@ def put_kryss(kryss_id: str, payload: KryssUpdate):
 
 
 @router.delete("/kryss/{kryss_id}", status_code=204)
-def remove_kryss(kryss_id: str):
+def remove_kryss(kryss_id: str, _user: dict = Depends(require_auth)):
     try:
         if not delete_kryss(kryss_id):
             raise HTTPException(status_code=404, detail="Kryss entry not found")
@@ -100,7 +102,7 @@ def get_ice_list(limit: int = Query(100, ge=1, le=500)):
 
 
 @router.post("/ice", response_model=IceResponse, status_code=201)
-def post_ice(payload: IceCreate):
+def post_ice(payload: IceCreate, _user: dict = Depends(require_auth)):
     try:
         return create_ice(payload)
     except ValueError as exc:
@@ -113,7 +115,7 @@ def post_ice(payload: IceCreate):
 
 
 @router.delete("/ice/{ice_id}", status_code=204)
-def remove_ice(ice_id: str):
+def remove_ice(ice_id: str, _user: dict = Depends(require_auth)):
     try:
         if not delete_ice(ice_id):
             raise HTTPException(status_code=404, detail="Ice entry not found")
@@ -125,7 +127,7 @@ def remove_ice(ice_id: str):
 
 
 @router.put("/ice/{ice_id}", response_model=IceResponse)
-def put_ice(ice_id: str, payload: IceUpdate):
+def put_ice(ice_id: str, payload: IceUpdate, _user: dict = Depends(require_auth)):
     try:
         result = update_ice(ice_id, payload)
     except ValueError as exc:
@@ -155,7 +157,7 @@ def get_quotes_list(limit: int = Query(200, ge=1, le=500)):
 
 
 @router.post("/quotes", response_model=QuoteResponse, status_code=201)
-def post_quote(payload: QuoteCreate):
+def post_quote(payload: QuoteCreate, _user: dict = Depends(require_auth)):
     try:
         return create_quote(payload)
     except ValueError as exc:
@@ -168,7 +170,7 @@ def post_quote(payload: QuoteCreate):
 
 
 @router.delete("/quotes/{quote_id}", status_code=204)
-def remove_quote(quote_id: str):
+def remove_quote(quote_id: str, _user: dict = Depends(require_auth)):
     try:
         if not delete_quote(quote_id):
             raise HTTPException(status_code=404, detail="Quote not found")
@@ -180,7 +182,7 @@ def remove_quote(quote_id: str):
 
 
 @router.put("/quotes/{quote_id}", response_model=QuoteResponse)
-def put_quote(quote_id: str, payload: QuoteUpdate):
+def put_quote(quote_id: str, payload: QuoteUpdate, _user: dict = Depends(require_auth)):
     try:
         result = update_quote(quote_id, payload)
     except ValueError as exc:
