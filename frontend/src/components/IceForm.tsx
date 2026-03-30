@@ -1,6 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type { IceCreatePayload, Person } from "../types";
 import { useUnsavedGuard } from "../hooks/useUnsavedGuard";
+import CustomSelect from "./CustomSelect";
 
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
@@ -27,6 +28,11 @@ export default function IceForm({ people, onSubmit }: Props) {
     if (!date || !iceePersonId || !icerPersonId) return false;
     return true;
   }, [date, iceePersonId, icerPersonId]);
+
+  const peopleOptions = useMemo(
+    () => people.map((p) => ({ value: p.id, label: p.name })),
+    [people]
+  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,34 +83,24 @@ export default function IceForm({ people, onSubmit }: Props) {
       <div className="form-row">
         <label>
           Icee
-          <select
+          <CustomSelect
+            options={peopleOptions}
             value={iceePersonId}
-            onChange={(e) => setIceePersonId(e.target.value)}
+            onChange={setIceePersonId}
+            placeholder="Velg person…"
             required
-          >
-            <option value="">Velg person…</option>
-            {people.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          />
         </label>
 
         <label>
           Icer
-          <select
+          <CustomSelect
+            options={peopleOptions}
             value={icerPersonId}
-            onChange={(e) => setIcerPersonId(e.target.value)}
+            onChange={setIcerPersonId}
+            placeholder="Velg person…"
             required
-          >
-            <option value="">Velg person…</option>
-            {people.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          />
         </label>
       </div>
 
