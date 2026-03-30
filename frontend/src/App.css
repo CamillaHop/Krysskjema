@@ -74,6 +74,28 @@
   gap: 0.5rem;
 }
 
+.auth-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  padding: 0.3rem 0.6rem;
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.auth-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.auth-login {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
 .color-toggle {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1227,6 +1249,231 @@ html.dark .custom-select.open .custom-select-trigger {
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+/* ── Auth avatar link ── */
+
+.auth-avatar-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.auth-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.auth-avatar-link:hover .auth-avatar,
+.auth-avatar-link:hover .auth-avatar-placeholder {
+  border-color: var(--color-primary);
+}
+
+.auth-avatar-placeholder {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+/* ── Login required page ── */
+
+.login-required {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.login-required h2 {
+  font-size: var(--font-size-h1);
+  margin-bottom: 0.5rem;
+}
+
+.login-required p {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  font-size: var(--font-size-base);
+}
+
+/* ── Shared button styles ── */
+
+.btn {
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* ── My Account page ── */
+
+.account-page {
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.account-page h2 {
+  font-size: var(--font-size-h1);
+  margin-bottom: 1.5rem;
+}
+
+.account-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.account-avatar-wrapper {
+  flex-shrink: 0;
+}
+
+.account-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.account-avatar-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.account-name {
+  font-weight: 600;
+  font-size: var(--font-size-h2);
+}
+
+.account-email {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.account-field {
+  margin-bottom: 1.75rem;
+}
+
+.account-field label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--color-text-muted);
+}
+
+.account-username-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.account-at {
+  padding: 0.5rem 0 0.5rem 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  user-select: none;
+}
+
+.account-username-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.5rem 0.5rem;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  outline: none;
+}
+
+.account-username-row .btn {
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0.5rem 1rem;
+}
+
+.account-stats-heading {
+  font-size: var(--font-size-h2);
+  margin-bottom: 0.75rem;
+}
+
+.account-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.account-stats .stat-card {
+  flex: 1 1 140px;
+}
+
+.account-no-match {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.account-logout {
+  margin-top: 0.5rem;
 }
 
 /* ── Mobile tweaks ── */

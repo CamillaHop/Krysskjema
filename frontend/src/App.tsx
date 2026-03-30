@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, NavLink, Route, Routes } from "react-router-dom";
+import { useAuth } from "./contexts/AuthContext";
 import {
   createKryss,
   createIce,
@@ -24,6 +25,7 @@ import LandingPage from "./pages/LandingPage";
 import LogPage from "./pages/LogPage";
 import QuotesPage from "./pages/QuotesPage";
 import StatsPage from "./pages/StatsPage";
+import MyAccountPage from "./pages/MyAccountPage";
 import "./App.css";
 
 function useDarkMode() {
@@ -67,6 +69,15 @@ export default function App() {
   const [quotes, setQuotes] = useState<QuoteEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user, login, logout, getToken, loginAndGetToken } = useAuth();
+
+  async function requireLogin(): Promise<string> {
+    if (user) {
+      const token = await getToken();
+      if (token) return token;
+    }
+    return loginAndGetToken();
+  }
 
   /* ── Load initial data ── */
   const loadData = useCallback(async () => {
@@ -92,18 +103,21 @@ export default function App() {
   /* ── Handlers ── */
 
   async function handleCreateKryss(payload: KryssCreatePayload) {
-    await createKryss(payload);
+    const token = await requireLogin();
+    await createKryss(payload, token);
     await loadData();
   }
 
   async function handleCreateIce(payload: IceCreatePayload) {
-    await createIce(payload);
+    const token = await requireLogin();
+    await createIce(payload, token);
     await loadData();
   }
 
   async function handleDelete(id: string) {
     try {
-      await deleteKryss(id);
+      const token = await requireLogin();
+      await deleteKryss(id, token);
       setEntries((prev) => prev.filter((e) => e.id !== id));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Kunne ikke slette");
@@ -112,7 +126,8 @@ export default function App() {
 
   async function handleDeleteIce(id: string) {
     try {
-      await deleteIce(id);
+      const token = await requireLogin();
+      await deleteIce(id, token);
       setIceEntries((prev) => prev.filter((e) => e.id !== id));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Kunne ikke slette");
@@ -120,23 +135,27 @@ export default function App() {
   }
 
   async function handleEditKryss(id: string, payload: KryssUpdatePayload) {
-    await updateKryss(id, payload);
+    const token = await requireLogin();
+    await updateKryss(id, payload, token);
     await loadData();
   }
 
   async function handleEditIce(id: string, payload: IceUpdatePayload) {
-    await updateIce(id, payload);
+    const token = await requireLogin();
+    await updateIce(id, payload, token);
     await loadData();
   }
 
   async function handleCreateQuote(payload: QuoteCreatePayload) {
-    await createQuote(payload);
+    const token = await requireLogin();
+    await createQuote(payload, token);
     await loadData();
   }
 
   async function handleDeleteQuote(id: string) {
     try {
-      await deleteQuote(id);
+      const token = await requireLogin();
+      await deleteQuote(id, token);
       setQuotes((prev) => prev.filter((q) => q.id !== id));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Kunne ikke slette");
@@ -144,7 +163,8 @@ export default function App() {
   }
 
   async function handleEditQuote(id: string, payload: QuoteUpdatePayload) {
-    await updateQuote(id, payload);
+    const token = await requireLogin();
+    await updateQuote(id, payload, token);
     await loadData();
   }
 
@@ -158,6 +178,19 @@ export default function App() {
             <p className="subtitle">Krysskjema, Ice og Sitater</p>
           </Link>
           <div className="header-toggles">
+            {user ? (
+              <Link to="/konto" className="auth-avatar-link" title="Min konto">
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="" className="auth-avatar" referrerPolicy="no-referrer" />
+                ) : (
+                  <span className="auth-avatar-placeholder">
+                    {(user.displayName ?? user.email ?? "?").charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </Link>
+            ) : (
+              <button className="auth-btn auth-login" onClick={login}>Logg inn</button>
+            )}
             <button
               className="color-toggle"
               onClick={toggleColor}
@@ -199,23 +232,68 @@ export default function App() {
       <main className="app-main">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/legg-til" element={<AddChoicePage />} />
+          <Route
+            path="/legg-til"
+            element={
+              user ? (
+                <AddChoicePage />
+              ) : (
+                <section className="login-required">
+                  <h2>Du er ikke logget inn</h2>
+                  <p>Du må logge inn for å legge til.</p>
+                  <button className="btn btn-primary" onClick={login}>
+                    Logg inn med Google
+                  </button>
+                </section>
+              )
+            }
+          />
           <Route
             path="/legg-til/kryss"
             element={
-              <KryssFormPage people={people} onSubmit={handleCreateKryss} />
+              user ? (
+                <KryssFormPage people={people} onSubmit={handleCreateKryss} />
+              ) : (
+                <section className="login-required">
+                  <h2>Du er ikke logget inn</h2>
+                  <p>Du må logge inn for å legge til kryss.</p>
+                  <button className="btn btn-primary" onClick={login}>
+                    Logg inn med Google
+                  </button>
+                </section>
+              )
             }
           />
           <Route
             path="/legg-til/ice"
             element={
-              <IceFormPage people={people} onSubmit={handleCreateIce} />
+              user ? (
+                <IceFormPage people={people} onSubmit={handleCreateIce} />
+              ) : (
+                <section className="login-required">
+                  <h2>Du er ikke logget inn</h2>
+                  <p>Du må logge inn for å legge til ice.</p>
+                  <button className="btn btn-primary" onClick={login}>
+                    Logg inn med Google
+                  </button>
+                </section>
+              )
             }
           />
           <Route
             path="/legg-til/sitat"
             element={
-              <QuoteFormPage people={people} onSubmit={handleCreateQuote} />
+              user ? (
+                <QuoteFormPage people={people} onSubmit={handleCreateQuote} />
+              ) : (
+                <section className="login-required">
+                  <h2>Du er ikke logget inn</h2>
+                  <p>Du må logge inn for å legge til sitater.</p>
+                  <button className="btn btn-primary" onClick={login}>
+                    Logg inn med Google
+                  </button>
+                </section>
+              )
             }
           />
           <Route
@@ -254,6 +332,28 @@ export default function App() {
                 people={people}
                 loading={loading}
               />
+            }
+          />
+          <Route
+            path="/konto"
+            element={
+              user ? (
+                <MyAccountPage
+                  user={user}
+                  people={people}
+                  entries={entries}
+                  iceEntries={iceEntries}
+                  onLogout={logout}
+                />
+              ) : (
+                <section className="login-required">
+                  <h2>Du er ikke logget inn</h2>
+                  <p>Logg inn for å se kontoen din.</p>
+                  <button className="btn btn-primary" onClick={login}>
+                    Logg inn med Google
+                  </button>
+                </section>
+              )
             }
           />
         </Routes>
