@@ -85,18 +85,23 @@ export default function MyAccountPage({
       <div className="account-field">
         <label htmlFor="username">Brukernavn</label>
         <div className="account-username-row">
-          <span className="account-at">@</span>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-              setSaved(false);
-            }}
-            placeholder="f.eks. camillahop"
-          />
-          <button className="btn btn-primary" onClick={handleSaveUsername}>
+          <div className="account-username-input">
+            <span className="account-at">@</span>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setSaved(false);
+              }}
+              placeholder="f.eks. camillahop"
+            />
+          </div>
+          <button
+            className="btn btn-primary account-save-btn"
+            onClick={handleSaveUsername}
+          >
             {saved ? "Lagret!" : "Lagre"}
           </button>
         </div>
